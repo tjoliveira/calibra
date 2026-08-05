@@ -1,0 +1,54 @@
+
+model:
+  name: "mistralai/Ministral-8B-Instruct-2410"
+  device: "cuda"
+  load_in_8bit: false
+  load_in_4bit: false
+
+semantic_model:
+  name: "all-MiniLM-L6-v2"
+
+
+tasks:
+  - name: "qa"
+    dataset: "squad"
+    split: "validation"
+    max_samples: 200
+  - name: "math"
+    dataset: "gsm8k"
+    split: "test"
+    max_samples: 200
+  - name: "summarization"
+    dataset: "cnn_dailymail"
+    split: "test"
+    max_samples: 200
+  - name: "open-ended"
+    dataset: "writing_prompts"
+    split: "test"
+    max_samples: 200
+
+uncertainty_methods:
+  - "entropy"
+  - "max_probability"
+  - "sequence_probability"
+  - "self_consistency"
+  - "self_reflection"
+  - "bsdetector"
+
+generation:
+  max_length: 50
+  temperature: 1.0
+  num_samples: 5
+
+output:
+  results_dir: "results/results_ministral_8b"
+  save_individual_results: true
+
+visualization:
+  plot_token_heatmaps: true
+  token_heatmap_max_samples: 20
+
+logging:
+  level: "INFO"
+
+
