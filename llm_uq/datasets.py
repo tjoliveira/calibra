@@ -1,4 +1,4 @@
-"""Dataset loading and validation for calibra benchmarks.
+"""Dataset loading and validation for llm-uq benchmarks.
 
 Built-in datasets are loaded from HuggingFace Hub. Custom datasets are
 accepted as plain Python lists of dicts with ``"input"`` and ``"target"``
@@ -6,12 +6,12 @@ keys.
 
 Example — built-in::
 
-    from calibra.datasets import load_builtin
+    from llm_uq.datasets import load_builtin
     data = load_builtin("qa", dataset="squad", max_samples=50)
 
 Example — custom::
 
-    from calibra.datasets import validate_custom
+    from llm_uq.datasets import validate_custom
     data = validate_custom([
         {"input": "What year did WWII end?", "target": "1945"},
     ], task="qa")
@@ -62,6 +62,7 @@ def load_builtin(
     split: str = "test",
     max_samples: int | None = None,
     seed: int = 42,
+    trust_remote_code: bool = False,
 ) -> list[dict[str, Any]]:
     """Load a built-in HuggingFace dataset and normalise it.
 
@@ -74,6 +75,8 @@ def load_builtin(
         split: Dataset split to load (e.g. ``"test"``, ``"validation"``).
         max_samples: Truncate to this many samples after shuffling.
         seed: Random seed for shuffling.
+        trust_remote_code: Allow the dataset repo to execute arbitrary code
+            on load. Disabled by default.
 
     Returns:
         List of dicts with keys ``"id"``, ``"input"``, and ``"target"``.
@@ -92,8 +95,14 @@ def load_builtin(
     hf_name = dataset or cfg["hf_name"]
     hf_kwargs = cfg["hf_kwargs"] if dataset is None else {}
 
+    if trust_remote_code:
+        logger.warning(
+            "trust_remote_code=True: the dataset repo '%s' may execute arbitrary "
+            "Python code on your machine. Only use this with repos you fully trust.",
+            hf_name,
+        )
     logger.info("Loading dataset: %s (split=%s)", hf_name, split)
-    ds = load_dataset(hf_name, **hf_kwargs, split=split, trust_remote_code=True)
+    ds = load_dataset(hf_name, **hf_kwargs, split=split, trust_remote_code=trust_remote_code)
 
     if max_samples and len(ds) > max_samples:
         ds = ds.shuffle(seed=seed).select(range(max_samples))

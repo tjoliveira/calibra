@@ -21,7 +21,7 @@ pip install "llm-uq[quantization]"
 For development (tests, linting, docs):
 
 ```bash
-git clone https://github.com/tjoliveira/calibra
+git clone https://github.com/tjoliveira/llm-uq
 cd calibra
 pip install -e ".[dev,docs]"
 ```
@@ -33,7 +33,7 @@ pip install -e ".[dev,docs]"
 `Estimator.from_pretrained` wraps HuggingFace `AutoModelForCausalLM` and returns a ready-to-use estimator.
 
 ```python
-from calibra import Estimator
+from llm_uq import Estimator
 
 est = Estimator.from_pretrained(
     "Qwen/Qwen3-8B",
@@ -47,7 +47,7 @@ If you already have a loaded model and tokenizer (e.g. from your own training pi
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from calibra import Estimator
+from llm_uq import Estimator
 
 model = AutoModelForCausalLM.from_pretrained("my-org/my-model")
 tokenizer = AutoTokenizer.from_pretrained("my-org/my-model")
@@ -112,7 +112,7 @@ print(f"Speculative entropy: {speculative['entropy']:.4f}")
 ### Built-in datasets
 
 ```python
-from calibra import Estimator, Benchmark
+from llm_uq import Estimator, Benchmark
 
 est = Estimator.from_pretrained("Qwen/Qwen3-8B", trust_remote_code=True)
 bench = Benchmark(est)
@@ -139,7 +139,7 @@ results = bench.run(
 Pass a list of dicts with `"input"` and `"target"` keys:
 
 ```python
-from calibra import validate_custom
+from llm_uq import validate_custom
 
 my_data = [
     {"input": "What year did WWII end?",      "target": "1945"},
@@ -426,7 +426,7 @@ viz.token_heatmap(
 
 ```python
 import matplotlib.pyplot as plt
-from calibra import viz
+from llm_uq import viz
 
 viz.set_style()   # apply calibra's seaborn whitegrid theme
 

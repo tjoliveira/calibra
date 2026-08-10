@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="calibra" width="480"/>
+  <img src="assets/logo.svg" alt="llm-uq" width="480"/>
 </p>
 
 <p align="center">
   <a href="https://pypi.org/project/llm-uq/"><img src="https://img.shields.io/pypi/v/llm-uq?label=PyPI&color=6366f1" alt="PyPI"/></a>
   <a href="https://pypi.org/project/llm-uq/"><img src="https://img.shields.io/pypi/pyversions/llm-uq?color=818cf8" alt="Python versions"/></a>
-  <a href="https://github.com/tjoliveira/calibra"><img src="https://img.shields.io/badge/github-tjoliveira%2Fcalibra-blue?logo=github" alt="GitHub"/></a>
+  <a href="https://github.com/tjoliveira/llm-uq"><img src="https://img.shields.io/badge/github-tjoliveira%2Fllm--uq-blue?logo=github" alt="GitHub"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License: Apache 2.0"/></a>
 </p>
 
@@ -18,7 +18,7 @@
 
 ## Overview
 
-Language models produce fluent text even when they are wrong. **calibra** gives you the tools to detect that — by computing, evaluating, and visualising uncertainty scores that track whether a model's output is likely to be correct.
+Language models produce fluent text even when they are wrong. **llm-uq** gives you the tools to detect that — by computing, evaluating, and visualising uncertainty scores that track whether a model's output is likely to be correct.
 
 It implements **six uncertainty estimation methods** spanning token probabilities, semantic consistency, and self-reflection, and evaluates them against ground-truth correctness across QA, math, summarisation, and open-ended generation tasks. You get AUROC, ECE, and Spearman correlation so you can measure, not just guess, how well uncertainty tracks actual errors.
 
@@ -35,18 +35,12 @@ pip install llm-uq
 pip install "llm-uq[quantization]"
 ```
 
-> **Note:** The PyPI distribution is named `llm-uq`. The Python import name is `calibra`.
-> ```python
-> import calibra          # correct
-> import llm_uq           # incorrect
-> ```
-
 ---
 
 ## Quickstart
 
 ```python
-from calibra import Estimator, Benchmark, metrics, viz
+from llm_uq import Estimator, Benchmark, metrics, viz
 
 # ── 1. Load a HuggingFace causal LM ──────────────────────────────────────────
 est = Estimator.from_pretrained(
@@ -120,7 +114,7 @@ plt.show()
 
 ## Uncertainty Methods
 
-calibra implements six methods across two families. All methods return scores where **higher = more uncertain**.
+llm-uq implements six methods across two families. All methods return scores where **higher = more uncertain**.
 
 ### Probability-based methods
 
@@ -242,7 +236,7 @@ where confidence is $\operatorname{conf}_i = 1 - \hat{\mathcal{U}}_i$ (normalise
 **Spearman** $\rho$ and **Pearson** $r$ measure monotonic/linear alignment between uncertainty and error scores. These are more appropriate than AUROC for continuous error scales (summarisation, open-ended generation).
 
 ```python
-from calibra import metrics
+from llm_uq import metrics
 
 u = results.uncertainties["entropy"]
 e = results.errors
@@ -265,7 +259,7 @@ print(summary.auroc, summary.ece, summary.spearman, summary.error_rate)
 All plot functions accept an optional `ax=` argument for composing multi-panel figures. When `ax` is omitted, a standalone figure is created (and optionally saved via `save_path`).
 
 ```python
-from calibra import viz
+from llm_uq import viz
 import matplotlib.pyplot as plt
 
 # Apply the default calibra visual theme
@@ -425,8 +419,8 @@ python scripts/extract_latency_quality_tradeoff.py
 ## Development
 
 ```bash
-git clone https://github.com/tjoliveira/calibra
-cd calibra
+git clone https://github.com/tjoliveira/llm-uq
+cd llm-uq
 pip install -e ".[dev]"
 pytest tests/
 ```

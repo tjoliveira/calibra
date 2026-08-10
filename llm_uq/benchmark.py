@@ -9,11 +9,11 @@ from typing import Any
 import torch
 from tqdm import tqdm
 
-from calibra.estimator import Estimator
-from calibra.results import BenchmarkResult
-from calibra.datasets import load_builtin, validate_custom
-from calibra import metrics as _metrics
-from calibra._scoring import score_qa, score_math, score_summarization, score_open_ended
+from llm_uq.estimator import Estimator
+from llm_uq.results import BenchmarkResult
+from llm_uq.datasets import load_builtin, validate_custom
+from llm_uq import metrics as _metrics
+from llm_uq._scoring import score_qa, score_math, score_summarization, score_open_ended
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class Benchmark:
 
     Example::
 
-        from calibra import Estimator, Benchmark
+        from llm_uq import Estimator, Benchmark
 
         est = Estimator.from_pretrained("Qwen/Qwen3-8B")
         bench = Benchmark(est)
@@ -54,13 +54,13 @@ class Benchmark:
         estimator: Estimator,
         judge_model_name: str = "prometheus-eval/prometheus-7b-v2.0",
     ) -> None:
-        """Initialise with an :class:`~calibra.Estimator`.
+        """Initialise with an :class:`~llm_uq.Estimator`.
 
         The Prometheus 2 judge model is loaded lazily — only when
         ``run(task="open-ended")`` is first called.
 
         Args:
-            estimator: A ready-to-use :class:`~calibra.Estimator` instance.
+            estimator: A ready-to-use :class:`~llm_uq.Estimator` instance.
             judge_model_name: HuggingFace identifier for the Prometheus 2 judge.
         """
         self.estimator = estimator
@@ -100,11 +100,14 @@ class Benchmark:
             seed: Random seed for shuffling built-in datasets.
 
         Returns:
-            A :class:`~calibra.BenchmarkResult` with uncertainties, errors,
+            A :class:`~llm_uq.BenchmarkResult` with uncertainties, errors,
             and computed metrics.
         """
         if methods is None:
             methods = list(_ALL_METHODS)
+
+        if not 1 <= num_samples <= 100:
+            raise ValueError(f"num_samples must be between 1 and 100, got {num_samples}.")
 
         # Resolve dataset
         if isinstance(dataset, str):
@@ -174,7 +177,7 @@ class Benchmark:
                         all_uncertainties[method].append(float(val))
                 except Exception as exc:
                     logger.warning("Method %s failed on sample %s: %s",
-                                   method, sample.get("id", "?"), exc)
+                                   method, sample.get("id", "?"), type(exc).__name__)
                     all_uncertainties[method].append(None)
                 method_perf[method].append(max(time.perf_counter() - t_m, 0.0))
 
@@ -237,20 +240,20 @@ class Benchmark:
         inp = sample["input"]
         if task == "qa":
             return (
-                f"Question: {inp}\n\n"
+                f"Question:\n<input>\n{inp}\n</input>\n\n"
                 "Provide ONLY the answer with no explanation, no punctuation, "
                 "and no additional text. Just the answer.\nAnswer:"
             )
         if task == "math":
             return (
-                f"Problem: {inp}\n\n"
+                f"Problem:\n<input>\n{inp}\n</input>\n\n"
                 "Provide ONLY the final numerical answer. "
                 "No explanation, no text, just the number.\nAnswer:"
             )
         if task == "summarization":
-            return f"Article: {inp[:500]}...\nSummary:"
+            return f"Article:\n<input>\n{inp[:500]}\n</input>\n\nSummary:"
         if task == "open-ended":
-            return inp
+            return f"<input>\n{inp}\n</input>"
         raise ValueError(f"Unknown task: {task!r}")
 
     def _score_correctness(
@@ -316,7 +319,7 @@ class Benchmark:
     def _ensure_judge_loaded(self) -> None:
         if self._judge_model is not None:
             return
-        from calibra._loader import _load_model
+        from llm_uq._loader import _load_model
         logger.info("Loading Prometheus 2 judge: %s", self._judge_model_name)
         self._judge_model, self._judge_tokenizer = _load_model(self._judge_model_name)
         logger.info("Prometheus 2 judge ready.")

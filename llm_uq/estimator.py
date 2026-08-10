@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from calibra._loader import _load_model
+from llm_uq._loader import _load_model
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,7 @@ class Estimator:
         load_in_8bit: bool = False,
         load_in_4bit: bool = False,
         semantic_model: str = "all-MiniLM-L6-v2",
+        trust_remote_code: bool = False,
     ) -> "Estimator":
         """Load a HuggingFace model and return a ready-to-use Estimator.
 
@@ -88,12 +89,15 @@ class Estimator:
             model_name: HuggingFace model identifier (e.g. ``"Qwen/Qwen3-8B"``).
             device: Target device. Auto-detected when ``None``.
             load_in_8bit: Enable 8-bit quantization (requires CUDA +
-                ``calibra[quantization]``).
+                ``llm-uq[quantization]``).
             load_in_4bit: Enable 4-bit quantization (requires CUDA +
-                ``calibra[quantization]``).
+                ``llm-uq[quantization]``).
             semantic_model: Sentence-transformers model for
                 ``self_consistency`` / ``bsdetector``. Pass ``None`` to
                 disable those methods.
+            trust_remote_code: Allow the model repo to execute arbitrary code
+                on load. Disabled by default — only enable for repos you fully
+                trust (e.g. some Qwen models require this).
 
         Returns:
             A fully initialised :class:`Estimator`.
@@ -103,6 +107,7 @@ class Estimator:
             device=device,
             load_in_8bit=load_in_8bit,
             load_in_4bit=load_in_4bit,
+            trust_remote_code=trust_remote_code,
         )
         return cls(model, tokenizer, semantic_model=semantic_model, device=device)
 
@@ -148,6 +153,9 @@ class Estimator:
         unknown = set(methods) - set(_ALL_METHODS)
         if unknown:
             raise ValueError(f"Unknown methods: {unknown}. Choose from {_ALL_METHODS}.")
+
+        if not 1 <= num_samples <= 100:
+            raise ValueError(f"num_samples must be between 1 and 100, got {num_samples}.")
 
         _, outputs = self._generate_with_scores(prompt, max_new_tokens)
         reference = self._extract_text(outputs)
@@ -408,7 +416,11 @@ class Estimator:
                 "3. IMPORTANT: Respond with EXACTLY ONE CHARACTER: A, B, or C.\n"
             )
 
-        reflection_prompt = f"{prompt}\n\nProposed answer: {answer}\n\n{task_desc}Answer:\n"
+        reflection_prompt = (
+            f"<original_prompt>\n{prompt}\n</original_prompt>\n\n"
+            f"<proposed_answer>\n{answer}\n</proposed_answer>\n\n"
+            f"{task_desc}Answer:\n"
+        )
         inputs = self.tokenizer(reflection_prompt, return_tensors="pt").to(self.device)
 
         with torch.no_grad():

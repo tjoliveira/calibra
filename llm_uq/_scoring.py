@@ -148,7 +148,7 @@ def score_open_ended(
         ValueError: If ``"target"`` is absent from ``sample``.
     """
     import torch
-    from calibra._compat import format_mistral_prompt
+    from llm_uq._compat import format_mistral_prompt
 
     instruction = sample.get("input", "")
     reference = sample.get("target", "")
@@ -169,9 +169,9 @@ def score_open_ended(
         '3. The output format should look as follows: '
         '"Feedback: (write a feedback for criteria) [RESULT] (an integer number between 1 and 5)"\n'
         "4. Please do not generate any other opening, closing, and explanations.\n\n"
-        f"###The instruction to evaluate:\n{instruction}\n\n"
-        f"###Response to evaluate:\n{prediction}\n\n"
-        f"###Reference Answer (Score 5):\n{reference}\n\n"
+        f"###The instruction to evaluate:\n<instruction>\n{instruction}\n</instruction>\n\n"
+        f"###Response to evaluate:\n<response>\n{prediction}\n</response>\n\n"
+        f"###Reference Answer (Score 5):\n<reference>\n{reference}\n</reference>\n\n"
         "###Score Rubrics:\n"
         "[Quality of the response]\n"
         "Score 1: Completely irrelevant, incorrect, or fails to address the instruction.\n"
@@ -232,7 +232,5 @@ def _parse_prometheus_score(text: str) -> float:
     if nums:
         return float(nums[-1])
 
-    logger.warning(
-        "Could not parse Prometheus score from: %s… Defaulting to 1.", text[:200]
-    )
+    logger.warning("Could not parse Prometheus score from judge output. Defaulting to 1.")
     return 1.0

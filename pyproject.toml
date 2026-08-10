@@ -50,16 +50,16 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/tjoliveira/calibra"
-Repository = "https://github.com/tjoliveira/calibra"
-"Bug Tracker" = "https://github.com/tjoliveira/calibra/issues"
+Homepage = "https://github.com/tjoliveira/llm-uq"
+Repository = "https://github.com/tjoliveira/llm-uq"
+"Bug Tracker" = "https://github.com/tjoliveira/llm-uq/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["calibra"]
+packages = ["llm_uq"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--tb=short -q"
 
 [tool.coverage.run]
-source = ["calibra"]
+source = ["llm_uq"]

@@ -13,6 +13,7 @@ def _load_model(
     device: str | None = None,
     load_in_8bit: bool = False,
     load_in_4bit: bool = False,
+    trust_remote_code: bool = False,
 ) -> tuple:
     """Load a HuggingFace causal language model and its tokenizer.
 
@@ -21,6 +22,8 @@ def _load_model(
         device: Target device. Defaults to ``"cuda"`` when available, else ``"cpu"``.
         load_in_8bit: Enable 8-bit quantization (requires CUDA and bitsandbytes).
         load_in_4bit: Enable 4-bit quantization (requires CUDA and bitsandbytes).
+        trust_remote_code: Allow the model repo to execute arbitrary code on load.
+            Disabled by default. Only enable for repos you fully trust.
 
     Returns:
         A ``(model, tokenizer)`` tuple with the model in eval mode.
@@ -28,6 +31,12 @@ def _load_model(
     Raises:
         ValueError: If both ``load_in_8bit`` and ``load_in_4bit`` are True.
     """
+    if trust_remote_code:
+        logger.warning(
+            "trust_remote_code=True: the model repo '%s' may execute arbitrary "
+            "Python code on your machine. Only use this with repos you fully trust.",
+            model_name,
+        )
     if load_in_8bit and load_in_4bit:
         raise ValueError("Specify at most one of load_in_8bit or load_in_4bit.")
 
@@ -41,12 +50,12 @@ def _load_model(
     torch_dtype = torch.float16 if device == "cuda" else torch.float32
 
     logger.info("Loading tokenizer: %s", model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=trust_remote_code)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
     model_kwargs: dict = {
-        "trust_remote_code": True,
+        "trust_remote_code": trust_remote_code,
     }
     if device == "cuda":
         model_kwargs["device_map"] = "auto"

@@ -1,9 +1,9 @@
-"""Tests for calibra.Benchmark."""
+"""Tests for llm_uq.Benchmark."""
 
 import pytest
 
-from calibra.benchmark import Benchmark
-from calibra.results import BenchmarkResult
+from llm_uq.benchmark import Benchmark
+from llm_uq.results import BenchmarkResult
 
 
 def _make_bench(estimator_fixture):
@@ -61,7 +61,7 @@ def test_run_with_builtin_string_dataset(mocker, estimator_fixture):
         {"id": "1", "input": "What year?", "target": "1945"},
         {"id": "2", "input": "Which city?", "target": "Paris"},
     ]
-    mocker.patch("calibra.benchmark.load_builtin", return_value=fake_data)
+    mocker.patch("llm_uq.benchmark.load_builtin", return_value=fake_data)
     bench = _make_bench(estimator_fixture)
     _patch_run_method(mocker, bench)
     result = bench.run(task="qa", dataset="squad", methods=["entropy"])
@@ -111,7 +111,7 @@ def test_result_to_json_writes_file(mocker, tmp_path, estimator_fixture):
 
 def test_improved_qa_scoring_roman_numerals(mocker, estimator_fixture):
     """Super Bowl V should NOT match Super Bowl VII."""
-    from calibra._scoring import score_qa
+    from llm_uq._scoring import score_qa
     assert score_qa("Super Bowl V", "Super Bowl VII") == 0.0
     assert score_qa("Super Bowl V", "The winner is Super Bowl V") == 1.0
 
@@ -119,7 +119,7 @@ def test_improved_qa_scoring_roman_numerals(mocker, estimator_fixture):
 def test_prometheus_not_loaded_when_not_needed(mocker, estimator_fixture):
     bench = _make_bench(estimator_fixture)
     load_spy = mocker.patch.object(bench, "_ensure_judge_loaded")
-    mocker.patch("calibra.benchmark.load_builtin",
+    mocker.patch("llm_uq.benchmark.load_builtin",
                  return_value=[{"input": "Q", "target": "A", "id": "1"}])
     mocker.patch.object(bench, "_run_method", return_value=0.5)
     bench.run(task="qa", dataset="squad", methods=["entropy"])

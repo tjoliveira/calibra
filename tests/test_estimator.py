@@ -1,10 +1,10 @@
-"""Tests for calibra.Estimator using the fake model/tokenizer fixtures."""
+"""Tests for llm_uq.Estimator using the fake model/tokenizer fixtures."""
 
 import math
 import pytest
 import torch
 
-from calibra.estimator import Estimator
+from llm_uq.estimator import Estimator
 
 
 # ---------------------------------------------------------------------------
@@ -13,7 +13,7 @@ from calibra.estimator import Estimator
 
 
 def test_from_pretrained_uses_load_model(mocker, fake_model, fake_tokenizer):
-    mocker.patch("calibra.estimator._load_model", return_value=(fake_model, fake_tokenizer))
+    mocker.patch("llm_uq.estimator._load_model", return_value=(fake_model, fake_tokenizer))
     est = Estimator.from_pretrained("fake/model", semantic_model=None)
     assert isinstance(est, Estimator)
 

@@ -51,10 +51,10 @@
   <!-- Vertical divider -->
   <line x1="360" y1="22" x2="360" y2="138" stroke="#1e293b" stroke-width="1.5"/>
 
-  <!-- "calibra" wordmark -->
+  <!-- "llm-uq" wordmark -->
   <text x="460" y="84" text-anchor="middle"
         font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="44" font-weight="800" fill="white" letter-spacing="3">calibra</text>
+        font-size="44" font-weight="800" fill="white" letter-spacing="2">llm-uq</text>
 
   <!-- Tagline -->
   <text x="460" y="108" text-anchor="middle"

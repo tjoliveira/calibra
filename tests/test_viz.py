@@ -1,4 +1,4 @@
-"""Tests for calibra.viz — verify files are created and ax= parameter works."""
+"""Tests for llm_uq.viz — verify files are created and ax= parameter works."""
 
 import matplotlib
 matplotlib.use("Agg")  # Non-interactive backend for tests
@@ -6,7 +6,7 @@ matplotlib.use("Agg")  # Non-interactive backend for tests
 import matplotlib.pyplot as plt
 import pytest
 
-from calibra import viz
+from llm_uq import viz
 
 
 @pytest.fixture(autouse=True)
@@ -92,8 +92,8 @@ def test_no_global_style_mutation_on_import():
     import matplotlib
     before = dict(matplotlib.rcParams)
     import importlib
-    import calibra.viz
-    importlib.reload(calibra.viz)
+    import llm_uq.viz
+    importlib.reload(llm_uq.viz)
     after = dict(matplotlib.rcParams)
     # figure.figsize should not have been changed by the module reload
     assert before.get("figure.figsize") == after.get("figure.figsize")

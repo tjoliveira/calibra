@@ -1,4 +1,4 @@
-"""Shared fixtures for calibra tests."""
+"""Shared fixtures for llm_uq tests."""
 
 import pytest
 import torch
@@ -102,5 +102,5 @@ def fake_outputs():
 
 @pytest.fixture
 def estimator_fixture(fake_model, fake_tokenizer):
-    from calibra.estimator import Estimator
+    from llm_uq.estimator import Estimator
     return Estimator(fake_model, fake_tokenizer, semantic_model=None, device="cpu")

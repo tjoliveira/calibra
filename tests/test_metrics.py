@@ -1,10 +1,10 @@
-"""Tests for calibra.metrics — pure numeric functions, no mocking needed."""
+"""Tests for llm_uq.metrics — pure numeric functions, no mocking needed."""
 
 import math
 import numpy as np
 import pytest
 
-from calibra import metrics
+from llm_uq import metrics
 
 
 def test_auroc_perfect_predictor():

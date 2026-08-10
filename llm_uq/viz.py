@@ -6,7 +6,7 @@ multi-panel figures. When ``ax`` is ``None`` a new figure is created, saved
 (if ``save_path`` is given), and closed.
 
 Call :func:`set_style` once at the start of your script or notebook to apply
-the default calibra visual theme.
+the default llm-uq visual theme.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ _DEFAULT_FIG_SIZE = (10, 7)
 
 
 def set_style() -> None:
-    """Apply the default calibra matplotlib/seaborn style.
+    """Apply the default llm-uq matplotlib/seaborn style.
 
     Call this once at the start of a script or notebook session.
     """
@@ -37,8 +37,18 @@ def set_style() -> None:
 
 def _save_and_close(fig: plt.Figure, save_path: str | None) -> None:
     if save_path:
-        os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
-        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+        from pathlib import PurePosixPath, PureWindowsPath
+        pure = PurePosixPath(save_path) if os.sep == "/" else PureWindowsPath(save_path)
+        if ".." in pure.parts:
+            plt.close(fig)
+            raise ValueError(
+                f"save_path {save_path!r} contains '..' components and is not allowed."
+            )
+        full = os.path.abspath(save_path)
+        parent = os.path.dirname(full)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        fig.savefig(full, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 

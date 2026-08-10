@@ -80,9 +80,22 @@ class BenchmarkResult:
         """Write results to a JSON file.
 
         Args:
-            path: Destination file path.
+            path: Destination file path. Must be within the current working directory.
+
+        Raises:
+            ValueError: If ``path`` resolves outside the current working directory.
         """
         import os
-        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-        with open(path, "w") as f:
+        from pathlib import PurePosixPath, PureWindowsPath
+        # Block paths that contain ".." components — the traversal vector.
+        pure = PurePosixPath(path) if os.sep == "/" else PureWindowsPath(path)
+        if ".." in pure.parts:
+            raise ValueError(
+                f"Output path {path!r} contains '..' components and is not allowed."
+            )
+        full = os.path.abspath(path)
+        parent = os.path.dirname(full)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        with open(full, "w") as f:
             json.dump(self.to_dict(), f, indent=2)

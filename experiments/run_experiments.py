@@ -9,9 +9,9 @@ from typing import Any
 
 from omegaconf import OmegaConf
 
-from calibra import Estimator, Benchmark
-from calibra.datasets import load_builtin
-from calibra import viz
+from llm_uq import Estimator, Benchmark
+from llm_uq.datasets import load_builtin
+from llm_uq import viz
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

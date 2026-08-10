@@ -1,8 +1,8 @@
-"""Tests for calibra.datasets."""
+"""Tests for llm_uq.datasets."""
 
 import pytest
 
-from calibra.datasets import validate_custom, load_builtin
+from llm_uq.datasets import validate_custom, load_builtin
 
 
 # ---------------------------------------------------------------------------
