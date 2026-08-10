@@ -27,6 +27,14 @@ logger = logging.getLogger(__name__)
 # Canonical keys per task expected by Benchmark
 _REQUIRED_KEYS = {"input", "target"}
 
+# Short-name aliases → full HuggingFace repo ids
+_DATASET_ALIASES: dict[str, str] = {
+    "squad": "rajpurkar/squad",
+    "gsm8k": "openai/gsm8k",
+    "cnn_dailymail": "abisee/cnn_dailymail",
+    "writingprompts": "euclaise/writingprompts",
+}
+
 # HuggingFace dataset defaults per task
 _TASK_DEFAULTS: dict[str, dict] = {
     "qa": {
@@ -92,8 +100,12 @@ def load_builtin(
     from datasets import load_dataset  # deferred import — not required at import time
 
     cfg = _TASK_DEFAULTS[task]
-    hf_name = dataset or cfg["hf_name"]
-    hf_kwargs = cfg["hf_kwargs"] if dataset is None else {}
+    if dataset is None:
+        hf_name = cfg["hf_name"]
+        hf_kwargs = cfg["hf_kwargs"]
+    else:
+        hf_name = _DATASET_ALIASES.get(dataset, dataset)
+        hf_kwargs = cfg["hf_kwargs"] if hf_name == cfg["hf_name"] else {}
 
     if trust_remote_code:
         logger.warning(

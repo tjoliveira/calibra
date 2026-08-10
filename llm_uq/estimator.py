@@ -426,7 +426,7 @@ class Estimator:
         with torch.no_grad():
             out = self.model.generate(
                 **inputs,
-                max_new_tokens=1,
+                max_new_tokens=16,  # models like Qwen3 emit <think> tokens before the answer
                 do_sample=False,
                 pad_token_id=self.tokenizer.eos_token_id,
             )
@@ -435,13 +435,13 @@ class Estimator:
             out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True
         ).strip()
 
-        for ch in response:
-            if ch.lower() in ("a", "b", "c"):
-                return {"a": 0.0, "b": 1.0, "c": 0.5}[ch.lower()]
+        # Search the whole response — the letter may follow whitespace or punctuation
+        for ch in response.upper():
+            if ch in ("A", "B", "C"):
+                return {"A": 0.0, "B": 1.0, "C": 0.5}[ch]
 
-        raise ValueError(
-            f"Could not parse self-reflection response (expected A/B/C, got: {response!r})"
-        )
+        logger.warning("self_reflection: could not parse response %r — defaulting to 0.5", response)
+        return 0.5
 
     def bsdetector_score(
         self,
