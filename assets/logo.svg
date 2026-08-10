@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 160" width="560" height="160">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="50%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="560" height="160" rx="14" fill="url(#bgGrad)"/>
+
+  <!-- ±2σ shaded region -->
+  <polygon
+    points="80,107 100,93 125,67 140,49 155,35 170,30 185,35 200,49 215,67 230,82 250,99 270,107 270,116 80,116"
+    fill="#6366f1" opacity="0.18"/>
+
+  <!-- ±1σ shaded region -->
+  <polygon
+    points="125,67 140,49 155,35 170,30 185,35 200,49 215,67 215,116 125,116"
+    fill="#818cf8" opacity="0.28"/>
+
+  <!-- Baseline -->
+  <line x1="24" y1="116" x2="336" y2="116" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Bell curve -->
+  <polyline
+    points="24,116 40,115 60,113 80,107 100,93 125,67 140,49 155,35 170,30 185,35 200,49 215,67 230,82 250,99 270,107 290,112 310,114 330,115 336,116"
+    fill="none" stroke="url(#curveGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Peak dot -->
+  <circle cx="170" cy="30" r="4.5" fill="#e879f9"/>
+
+  <!-- Dashed vertical at μ -->
+  <line x1="170" y1="34" x2="170" y2="116" stroke="#475569" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Axis tick marks and labels -->
+  <line x1="125" y1="114" x2="125" y2="121" stroke="#475569" stroke-width="1"/>
+  <text x="125" y="133" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#94a3b8">&#x2212;&#x03C3;</text>
+
+  <line x1="170" y1="114" x2="170" y2="121" stroke="#475569" stroke-width="1"/>
+  <text x="170" y="133" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#94a3b8">&#x03BC;</text>
+
+  <line x1="215" y1="114" x2="215" y2="121" stroke="#475569" stroke-width="1"/>
+  <text x="215" y="133" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#94a3b8">+&#x03C3;</text>
+
+  <!-- Vertical divider -->
+  <line x1="360" y1="22" x2="360" y2="138" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- "calibra" wordmark -->
+  <text x="460" y="84" text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="44" font-weight="800" fill="white" letter-spacing="3">calibra</text>
+
+  <!-- Tagline -->
+  <text x="460" y="108" text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="11" fill="#94a3b8" letter-spacing="2.5">UNCERTAINTY QUANTIFICATION</text>
+</svg>
