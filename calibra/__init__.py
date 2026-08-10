@@ -1,20 +1,36 @@
 """
 calibra — uncertainty quantification for language model outputs.
 
+PyPI distribution: ``pip install llm-uq``
+Import name:       ``import calibra``
+
+Six uncertainty estimation methods (entropy, max_probability,
+sequence_probability, self_consistency, self_reflection, bsdetector)
+evaluated across QA, math, summarisation, and open-ended generation tasks.
+
 Quick start::
 
     from calibra import Estimator, Benchmark, metrics, viz
 
-    est = Estimator.from_pretrained("Qwen/Qwen3-8B")
-    result = est.estimate("What is the capital of France?", methods=["entropy"])
+    est = Estimator.from_pretrained("Qwen/Qwen3-8B", trust_remote_code=True)
 
+    # Single-prompt uncertainty
+    scores = est.estimate("What is the capital of France?", methods=["entropy"])
+    # {"entropy": 0.43}
+
+    # Benchmark on your own data
     bench = Benchmark(est)
-    results = bench.run(task="qa", dataset="squad", max_samples=100)
-    # or with your own data:
-    # results = bench.run(task="qa", dataset=[{"input": "...", "target": "..."}])
+    results = bench.run(
+        task="qa",
+        dataset=[{"input": "Who wrote Hamlet?", "target": "Shakespeare"}],
+    )
 
-    metrics.auroc(results.uncertainties["entropy"], results.errors)
-    viz.roc_curve(results, method="entropy", save_path="roc.png")
+    # Metrics and visualisation
+    print(results.auroc)
+    viz.roc_curve(results.uncertainties["entropy"], results.errors)
+
+Full documentation: https://github.com/tjoliveira/calibra/blob/main/docs/usage.md
+Interactive notebook: https://github.com/tjoliveira/calibra/blob/main/quickstart.ipynb
 """
 
 from calibra.estimator import Estimator
