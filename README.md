@@ -227,9 +227,9 @@ A value of 0.5 is random; 1.0 is perfect. Used primarily for binary tasks (QA, M
 
 Expected Calibration Error — measures how well confidence tracks accuracy across $B$ equal-width bins:
 
-$$\text{ECE} = \sum_{b=1}^{B} \frac{|B_b|}{n}\, \bigl|\operatorname{acc}(B_b) - \operatorname{conf}(B_b)\bigr|$$
+$$\text{ECE} = \sum_{b=1}^{B} \frac{|B_b|}{n}\, \bigl|\text{acc}(B_b) - \text{conf}(B_b)\bigr|$$
 
-where confidence is $\operatorname{conf}_i = 1 - \hat{\mathcal{U}}_i$ (normalised to $[0,1]$) and accuracy is the fraction of correct predictions in bin $b$. Lower ECE is better; 0 is perfect calibration.
+where confidence is $\text{conf}_i = 1 - \hat{\mathcal{U}}_i$ (normalised to $[0,1]$) and accuracy is the fraction of correct predictions in bin $b$. Lower ECE is better; 0 is perfect calibration.
 
 ### Rank Correlations
 
